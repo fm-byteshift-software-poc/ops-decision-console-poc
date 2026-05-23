@@ -2,6 +2,20 @@
 
 Full-stack PoC demonstrating confidence-based message classification and routing. Low-confidence decisions are visibly escalated for human review and never silently automated. Includes a React frontend for operational workflow validation and a FastAPI backend for LLM integration and data persistence.
 
+---
+
+## Live Demo Access
+
+This PoC is deployed and accessible for immediate validation. No local setup required.
+
+### Deployed Endpoints
+
+| Component            | URL                                                |
+| -------------------- | -------------------------------------------------- |
+| Frontend Application | [VALUE]                                            |
+| Backend API          | https://ops-decision-console-poc.onrender.com      |
+| API Documentation    | https://ops-decision-console-poc.onrender.com/docs |
+
 ## Stack
 
 **Backend**
