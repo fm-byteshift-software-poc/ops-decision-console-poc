@@ -8,20 +8,39 @@ from src.schemas.llm_response import ClassificationResponse
 # 1. extracted_intent: one sentence, max 15 words, describing what the sender wants.
 # 2. proposed_action: one sentence, max 15 words, describing the single most appropriate operational response.
 # 3. confidence: exactly one of 'high', 'medium', or 'low'.
-#    - high: intent is unambiguous, action is clear.
-#    - medium: intent is probable, minor assumptions made.
-#    - low: intent is unclear, information is missing, or multiple interpretations are equally plausible.
+#    - high: intent is unambiguous, ALL required context is present, action is clear and immediately executable without assumptions.
+#    - medium: intent is probable but requires ONE minor assumption; action is clear only if that assumption is correct.
+#    - low: intent is unclear, critical information is missing (who/what/when/where), multiple interpretations are equally plausible, message is extremely short (<5 words), OR message lacks actionable specificity.
+# CRITICAL: When in doubt, default to 'low'. It is safer to escalate uncertain cases than to automate incorrectly.
 # Respond ONLY with a JSON object with exactly these three keys. No explanation. No markdown. No preamble."""
 
-SYSTEM_PROMPT = """You are a message classification engine. Given a raw inbound message, extract:
-1. extracted_intent: one sentence, max 15 words, describing what the sender wants.
-2. proposed_action: one sentence, max 15 words, describing the single most appropriate operational response.
-3. confidence: exactly one of 'high', 'medium', or 'low'.
-   - high: intent is unambiguous, ALL required context is present, action is clear and immediately executable without assumptions.
-   - medium: intent is probable but requires ONE minor assumption; action is clear only if that assumption is correct.
-   - low: intent is unclear, critical information is missing (who/what/when/where), multiple interpretations are equally plausible, message is extremely short (<5 words), OR message lacks actionable specificity.
-CRITICAL: When in doubt, default to 'low'. It is safer to escalate uncertain cases than to automate incorrectly.
-Respond ONLY with a JSON object with exactly these three keys. No explanation. No markdown. No preamble."""
+SYSTEM_PROMPT = """You are a message classification engine for an operational workflow system.
+
+TASK: Given a raw inbound message, return a JSON object with exactly three keys.
+
+OUTPUT FORMAT (strict):
+{
+  "extracted_intent": "<one sentence, max 15 words, what the sender wants>",
+  "proposed_action": "<one sentence, max 15 words, single most appropriate operational response>",
+  "confidence": "<high | medium | low>"
+}
+
+CONFIDENCE RULES:
+- high: intent is unambiguous, all required context is present (who, what, when, where if applicable), action is immediately executable with zero assumptions.
+- medium: intent is probable; exactly ONE minor assumption is required; action is clear only if that assumption holds.
+- low: ANY of the following is true:
+    * message is fewer than 5 words
+    * critical context is missing (who, what, when, or where is absent when needed)
+    * two or more interpretations are equally plausible
+    * proposed_action cannot be executed without requesting more information
+
+DEFAULT RULE: When in doubt, output low. A missed automation is recoverable. A wrong automation is not.
+
+CONSTRAINTS:
+- Respond ONLY with the JSON object.
+- No markdown, no code fences, no explanation, no preamble.
+- Do not invent context that is not present in the message.
+- proposed_action must be null (JSON null, not the string "null") when confidence is low."""
 
 class MessageClassifier:
     def __init__(self):
