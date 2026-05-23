@@ -6,9 +6,7 @@ class Settings(BaseSettings):
 
     app_name: str = "ops-decision-console-poc"
     app_env: str = "development"
-    debug: bool = False
-    host: str = "0.0.0.0"
-    port: int = 8000
+    debug: bool = False    
 
     hf_api_token: str
     hf_model_id: str = "meta-llama/Llama-3.1-8B-Instruct:cerebras"
