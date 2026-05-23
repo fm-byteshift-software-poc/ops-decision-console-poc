@@ -12,9 +12,13 @@ This PoC is deployed and accessible for immediate validation. No local setup req
 
 | Component            | URL                                                |
 | -------------------- | -------------------------------------------------- |
-| Frontend Application | [VALUE]                                            |
+| Frontend Application | https://ops-decision-console-poc.vercel.app/       |
 | Backend API          | https://ops-decision-console-poc.onrender.com      |
 | API Documentation    | https://ops-decision-console-poc.onrender.com/docs |
+
+### Performance Note
+
+The demo runs on free tier hosting. Instances enter a sleep state after periods of inactivity. The first request following a sleep period may take up to 60 seconds to complete due to cold start behavior. Subsequent requests will respond immediately.
 
 ## Stack
 
